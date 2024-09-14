@@ -1,41 +1,27 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-const UploadCard = () => {
+const UploadCard = ({ processChatLogs }) => {
   const [files, setFiles] = useState([]);
   const [showWarning, setShowWarning] = useState(false);
 
-  const onDrop = (acceptedFiles) => {
-    const validFiles = acceptedFiles.filter(
-      (file) => file.type === "text/plain"
-    );
+  const handleFiles = (incomingFiles) => {
+    const anyInvalid = incomingFiles.some((file) => file.type !== "text/plain");
 
-    // Still take in valid files instead of early exit / reject all
-    setFiles((prevFiles) => [...prevFiles, ...validFiles]);
-
-    // Give warning prompt for file with the wrong format
-    if (acceptedFiles.length !== validFiles.length) {
+    if (anyInvalid) {
       setShowWarning(true);
+      return;
     }
+
+    setFiles((prevFiles) => [...prevFiles, ...incomingFiles]);
+    processChatLogs(files);
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
+    onDrop: handleFiles,
     accept: ".txt",
     multiple: true,
   });
-
-  const handleUploads = (event) => {
-    const uploadedFiles = Array.from(event.target.files);
-    const validFiles = uploadedFiles.filter(
-      (file) => file.type === "text/plain"
-    );
-    setFiles((prevFiles) => [...prevFiles, ...validFiles]);
-
-    if (uploadedFiles.length !== validFiles.length) {
-      setShowWarning(true);
-    }
-  };
 
   return (
     <div className="px-4">
@@ -59,7 +45,7 @@ const UploadCard = () => {
           className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
           multiple
           accept=".txt"
-          onChange={handleUploads}
+          onChange={processChatLogs}
         />
         <label
           htmlFor="custom-file"
@@ -80,28 +66,18 @@ const UploadCard = () => {
         {/* Toast to warn user if file format != .txt */}
         {showWarning && (
           <div
-            className="fixed bottom-4 right-4 bg-red-100 border border-red-400 text-red-700 p-4 rounded"
+            className="fixed left-1/2 transform -translate-x-1/2 bottom-4 bg-red-100 border border-red-400 text-red-700 py-4 pl-4 pr-12 rounded text-sm"
             role="alert"
           >
-            <strong className="font-bold">Warning!</strong>
             <span className="block sm:inline">
-              {" "}
-              Some files were not accepted. Only .txt files are allowed.
+              Only .txt files are accepted. Please reupload the correct files.
             </span>
-            <span
-              className="absolute top-0 bottom-0 right-0 px-4 py-3"
+            <strong
+              className="fixed font-bold text-red-500 right-4"
               onClick={() => setShowWarning(false)}
             >
-              <svg
-                className="fill-current h-6 w-6 text-red-500"
-                role="button"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <title>Close</title>
-                <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
-              </svg>
-            </span>
+              X
+            </strong>
           </div>
         )}
       </div>
