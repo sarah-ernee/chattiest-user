@@ -7,6 +7,7 @@ export const uploadChatLogs = async (files, k = 10) => {
   const filesArr = Array.isArray(files) ? files : [files];
   const formData = new FormData();
 
+  console.log(files);
   filesArr.forEach((file) => {
     formData.append("chatlog", file);
   });

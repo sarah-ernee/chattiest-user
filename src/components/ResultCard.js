@@ -6,7 +6,7 @@ const ResultCard = ({ results }) => {
         {results ? (
           results.map((result, index) => (
             <div key={index} className="flex">
-              {index + 1}. {result.username} - {result.wordCount} words
+              {index + 1}. {result.user} - {result.words} words
             </div>
           ))
         ) : (

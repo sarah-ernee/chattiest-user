@@ -11,12 +11,13 @@ export default function Main() {
 
   // API call
   const processChatLogs = async (incomingFiles) => {
-
     try {
       const data = await uploadChatLogs(incomingFiles, 10);
+      console.log(data);
       setResults(data);
     } catch (error) {
       console.error("Failed to trigger API successfully: ", error);
+      setResults(null);
     }
   };
 

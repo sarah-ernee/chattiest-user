@@ -10,11 +10,15 @@ const UploadCard = ({ processChatLogs }) => {
 
     if (anyInvalid) {
       setShowWarning(true);
+      setFiles([]);
       return;
     }
 
-    setFiles((prevFiles) => [...prevFiles, ...incomingFiles]);
-    processChatLogs(files);
+    setFiles((prevFiles) => {
+      const updatedFiles = [...prevFiles, ...incomingFiles];
+      processChatLogs(updatedFiles);
+      return updatedFiles;
+    });
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -22,6 +26,11 @@ const UploadCard = ({ processChatLogs }) => {
     accept: ".txt",
     multiple: true,
   });
+
+  const handleUploadBtn = (event) => {
+    const incomingFiles = Array.from(event.target.files);
+    handleFiles(incomingFiles);
+  };
 
   return (
     <div className="px-4">
@@ -45,7 +54,7 @@ const UploadCard = ({ processChatLogs }) => {
           className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
           multiple
           accept=".txt"
-          onChange={processChatLogs}
+          onChange={handleUploadBtn}
         />
         <label
           htmlFor="custom-file"
